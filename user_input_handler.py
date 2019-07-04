@@ -14,7 +14,7 @@ animation_dictionary = {
     'excited': ['excited'],
     'giggling': ['funny'],
     'heartbroke': ['heartbroke'],
-    'inlove': ['love', 'login'],
+    'inlove': ['love', 'loving'],
     'laughing': ['funny'],
     'money': ['price', 'expensive'],
     'no': ['no'],
@@ -55,7 +55,7 @@ def handle_question(user_message):
 
 
 def to_upper(user_message):
-    reply =  user_message.upper()
+    reply = user_message.upper()
     return reply
 
 
