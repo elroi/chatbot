@@ -15,7 +15,7 @@ def index():
 def chat():
     user_message = request.POST.get('msg')
     reply = user_input_handler.analyze_input(user_message)
-    print('in chat, reply: ' + json.dumps(reply))
+    user_input_handler.debug_log('in chat, reply: ' + json.dumps(reply))
     return json.dumps(reply)
     # return json.dumps({"animation": "inlove", "msg": reply})
 
