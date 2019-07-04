@@ -1,11 +1,13 @@
 import random
 import json
 import re
+import requests
+from requests.exceptions import HTTPError
 
 from profanity_check import predict, predict_prob
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-analyser = SentimentIntensityAnalyzer()
 
+analyser = SentimentIntensityAnalyzer()
 
 # Global setup - START
 
@@ -33,9 +35,11 @@ animation_dictionary = {
     'waiting': ['waiting']
 }
 
+
 def debug_log(inputMessage):
     if debug_mode:
         print("DEBUG message: " + str(inputMessage))
+
 
 # Global setup - END
 
@@ -50,6 +54,9 @@ def analyze_input(user_message):
         reply_text = handle_statement(user_message)
     elif user_message[-1] == "?":
         reply_text = handle_question(user_message)
+    elif "joke" in user_message:
+        reply_text = get_chuck_norris_jokes()
+        reply_animation = get_animation('funny')
     else:
         reply_text = to_upper(user_message)
     reply = {"animation": reply_animation, "msg": reply_text}
@@ -60,6 +67,7 @@ def analyze_input(user_message):
 def sentiment_analyzer_scores(sentence):
     score = analyser.polarity_scores(sentence)
     print("{:-<40} {}".format(sentence, str(score)))
+
 
 def check_profanity(user_message):
     debug_log('user_message: ' + user_message)
@@ -74,7 +82,8 @@ def check_profanity(user_message):
         overall_profanity_average = overall_profanity / len(actual_words_in_user_message)
         debug_log('overall_profanity_average: ' + str(overall_profanity_average))
         debug_log('profanity probability: ' + str(predict_prob(actual_words_in_user_message)))
-        debug_log('profanity probability: ' + str(sum(predict_prob(actual_words_in_user_message)) / len(actual_words_in_user_message)))
+        debug_log('profanity probability: ' + str(
+            sum(predict_prob(actual_words_in_user_message)) / len(actual_words_in_user_message)))
         if overall_profanity_average > 0.5:
             return True
     return False
@@ -108,3 +117,24 @@ def get_animation(user_message):
         debug_log("random animation")
         return random.choice(animation_list)
     return selected_animation
+
+
+def get_chuck_norris_jokes():
+    api_url = "http://api.icndb.com/jokes/random"
+    try:
+        response = requests.get(api_url)
+        response.raise_for_status()
+    except HTTPError as http_error:
+        debug_log((f'Some crooked HTTPError happened: {http_error}'))
+    except Exception as e:
+        debug_log(f'Some darn error happened: {e}')
+    else:
+        debug_log('Successfull requested the joke from it\'s api!')
+        if response and response.status_code == 200:
+            joke_id = response.json()["value"]["id"]
+            joke_text = response.json()["value"]["joke"]
+            joke = 'Chuck Norris joke {}: {}'.format(joke_id, joke_text)
+            debug_log(joke)
+        else:
+            joke = 'Chuck Norris ain\'t joking with you!'
+        return joke
