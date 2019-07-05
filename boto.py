@@ -1,10 +1,14 @@
 """
 This is the template server side for ChatBot
 """
-from bottle import route, run, template, static_file, request
+from bottle import route, run, template, static_file, request, response
 import json
 import user_input_handler
 
+
+#
+# first_interaction = True
+#
 
 @route('/', method='GET')
 def index():
@@ -14,8 +18,14 @@ def index():
 @route("/chat", method='POST')
 def chat():
     user_message = request.POST.get('msg')
+    user_cookies = request.get_cookie('user_name')
+    user_input_handler.debug_log('user_cookies: ' + str(user_cookies))
+
     reply = user_input_handler.analyze_input(user_message)
     user_input_handler.debug_log('in chat, reply: ' + json.dumps(reply))
+    #
+    if user_input_handler.user_name != None:
+        response.set_cookie('user_name', user_input_handler.user_name)
     return json.dumps(reply)
     # return json.dumps({"animation": "inlove", "msg": reply})
 
