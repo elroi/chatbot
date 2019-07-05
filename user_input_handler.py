@@ -3,6 +3,7 @@ import json
 import re
 import requests
 from requests.exceptions import HTTPError
+from http import cookies
 
 from profanity_check import predict, predict_prob
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
@@ -12,6 +13,7 @@ analyser = SentimentIntensityAnalyzer()
 # Global setup - START
 
 debug_mode = True
+# fresh_cookies = False
 
 animation_list = ['afraid', 'bored', 'confused', 'crying', 'dancing', 'dog', 'excited', 'giggling', 'heartbroke',
                   'inlove', 'laughing', 'money', 'no', 'ok', 'takeoff', 'waiting']
@@ -44,7 +46,7 @@ def debug_log(inputMessage):
 # Global setup - END
 
 def analyze_input(user_message):
-    # reply_text = ""
+    reply_text = ""
     is_profane = check_profanity(user_message)
     debug_log('is_profane: ' + str(is_profane))
     sentiment_analyzer_scores(user_message)
@@ -57,6 +59,10 @@ def analyze_input(user_message):
     elif "joke" in user_message:
         reply_text = get_chuck_norris_jokes()
         reply_animation = get_animation('funny')
+    elif look_for_a_name(user_message):
+        reply_text = handle_name(user_message)
+        reply_animation = get_animation('excited')
+        # store name cookie
     else:
         reply_text = to_upper(user_message)
     reply = {"animation": reply_animation, "msg": reply_text}
@@ -138,3 +144,21 @@ def get_chuck_norris_jokes():
         else:
             joke = 'Chuck Norris ain\'t joking with you!'
         return joke
+
+def look_for_a_name(user_message):
+    if ("name is" or "call me") in user_message:
+        return True
+
+def handle_name(user_message):
+    name_separators = ["name is","call me"]
+    for name_separator in name_separators:
+        if name_separator in user_message:
+            name = user_message.split(name_separator)[1]
+    debug_log('name: ' + name)
+    name_talkback_prefixes = ["Well hello there ","Nice to meet you ","Welcome "]
+    name_talkback_postfixes = [", very nice to meet you indeed!",", welcome!",", glad you could join us!"]
+    reply = random.choice(name_talkback_prefixes) + name + random.choice(name_talkback_postfixes)
+    return reply
+
+# def save_in_cookie(key, value):
+    
