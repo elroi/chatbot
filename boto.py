@@ -6,9 +6,6 @@ import json
 import user_input_handler
 
 
-#
-# first_interaction = True
-#
 
 @route('/', method='GET')
 def index():
@@ -27,7 +24,6 @@ def chat():
     if user_input_handler.user_name != None:
         response.set_cookie('user_name', user_input_handler.user_name)
     return json.dumps(reply)
-    # return json.dumps({"animation": "inlove", "msg": reply})
 
 
 @route("/test", method='POST')

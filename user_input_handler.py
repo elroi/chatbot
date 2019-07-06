@@ -176,11 +176,6 @@ def analyze_input(user_message):
         handle_statement_result = handle_statement(user_message)
         reply_text = handle_statement_result if len(
                 reply_text) == 0 else reply_text + ". Also, " + handle_statement_result
-    # Default handler
-    # else:
-    #     # default_handler_result = to_upper(user_message)
-    #     default_handler_result = random.choice(random_replies)
-    #     reply_text = default_handler_result if len(reply_text) == 0 else reply_text + " " + default_handler_result
     reply = {"animation": reply_animation, "msg": reply_text}
     debug_log('in analyze_input, reply: ' + json.dumps(reply))
     debug_log('====================================')
@@ -332,7 +327,6 @@ def handle_name(user_message):
     for name_separator in name_separators:
         if name_separator in user_message:
             name = user_message.split(name_separator)[1]
-            # save_in_cookie("name", name)
     if name == None and check_if_first_interaction(first_interaction):
         name = user_message.capitalize()
     if name != None:
@@ -380,7 +374,6 @@ def save_name_global_variable(name):
 def save_in_cookie(key, value):
     boto_cookie = cookies.SimpleCookie()
     boto_cookie[key] = value
-    # response.set_cookie
     debug_log('in save_in_cookie, boto_cookie: ' + str(boto_cookie))
     debug_log('in save_in_cookie, boto_cookie.output(): ' + boto_cookie.output())
     debug_log('in save_in_cookie, boto_cookie.js_output(): ' + boto_cookie.js_output())
