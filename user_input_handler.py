@@ -88,6 +88,20 @@ basic_q_and_a = {
         "{}, if you're into me take a number (*in hex)".format(random.choice(gender_list)),
     ]
 }
+basic_statements_replies = [
+    'sounds interesting!',
+    'tell me more!',
+    'wa wa wi wa!',
+    'in your maker!',
+    'why do you say that?',
+    'are you certain?',
+    'what makes you feel this way?',
+    'how long will you keep this thought?',
+    'come again?',
+    ':)',
+    'take that back!',
+    "That's a bold statement!"
+]
 
 
 def debug_log(inputMessage):
@@ -107,7 +121,7 @@ def analyze_input(user_message):
     debug_log('in analyze_input, is_profane: ' + str(is_profane))
     if is_profane:
         reply_text = "Why use this kind of language?"
-        reply_animation = get_animation('confused')
+        reply_animation = get_animation(random.choice(negative_animations))
         first_interaction = False
         return {"animation": reply_animation, "msg": reply_text}
     #
@@ -204,7 +218,7 @@ def check_profanity(user_message):
 
 
 def handle_statement(user_message):
-    reply_message = "That's a bold statement - '{}'".format(user_message)
+    reply_message = random.choice(basic_statements_replies)
     debug_log('in handle_statement, reply_message: ' + reply_message)
     return reply_message
 
